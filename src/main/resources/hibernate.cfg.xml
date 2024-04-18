@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-configuration PUBLIC "-//Hibernate/Hibernate Configuration DTD 3.0//EN"
+        "http://www.hibernate.org/dtd/hibernate-configuration">
+
+<hibernate-configuration xmlns="http://www.hibernate.org/xsd/orm/cfg">
+    <session-factory>
+        <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
+        <property name="hibernate.connection.username">admin</property>
+        <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/vuelosdb</property>
+        <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <property name="hibernate.show_sql">true</property>
+        <property name="hibernate.format_sql">true</property>
+        <property name="hibernate.hbm2ddl.auto">none</property>
+        <mapping class="com.donoso.easyflight.modelo.Usuario"/>
+        <mapping class="com.donoso.easyflight.modelo.Pais"/>
+        <mapping class="com.donoso.easyflight.modelo.Avion"/>
+        <mapping class="com.donoso.easyflight.modelo.Oferta"/>
+        <mapping class="com.donoso.easyflight.modelo.Aeropuerto"/>
+        <mapping class="com.donoso.easyflight.modelo.Reserva"/>
+        <mapping class="com.donoso.easyflight.modelo.Rol"/>
+        <mapping class="com.donoso.easyflight.modelo.Vuelo"/>
+        <mapping class="com.donoso.easyflight.modelo.Extra"/>
+        <mapping class="com.donoso.easyflight.modelo.ReservaExtra"/>
+        <mapping class="com.donoso.easyflight.modelo.UsuarioRol"/>
+    </session-factory>
+</hibernate-configuration>

@@ -1,0 +1,41 @@
+package com.donoso.easyflight.modelo;
+
+
+import lombok.*;
+
+import javax.json.bind.annotation.JsonbTransient;
+import javax.persistence.*;
+import java.io.Serializable;
+import java.util.Set;
+
+@Entity(name = "Usuario")
+@Table(name = "usuario")
+@NoArgsConstructor
+@AllArgsConstructor
+@Getter
+@Setter
+public class Usuario implements Serializable {
+
+    @Id
+    @Column(name = "id")
+    private String idDni;
+    @Column(name = "nombre")
+    private String nombre;
+    @Column(name = "apellidos")
+    private String apellidos;
+    @Column(name = "user")
+    private String user;
+    @Column(name = "password")
+    private String password;
+    @Column(name = "email")
+    private String email;
+    @Column(name = "telefono")
+    private String telefono;
+    @OneToOne
+    @JoinColumn(name = "pais")
+    private Pais pais;
+
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "usuario")
+    @JsonbTransient
+    Set<UsuarioRol> usuarioRol;
+}

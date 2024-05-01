@@ -37,7 +37,7 @@ public class ExtrasController {
         return Response.ok(extra, MediaType.APPLICATION_JSON).build();
     }
 
-    @GET
+    @POST
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchExtra(Extra extra) {

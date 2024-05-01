@@ -48,8 +48,9 @@ public class UsuariosController {
         return Response.ok(usuario, MediaType.APPLICATION_JSON).build();
     }
 
-    @GET
+    @POST
     @Path("/search")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchUsuario(Usuario usuario) {
         List<Usuario> usuarios = this.usuarioService.search(usuario);

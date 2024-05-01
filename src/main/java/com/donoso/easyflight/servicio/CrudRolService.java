@@ -1,5 +1,6 @@
 package com.donoso.easyflight.servicio;
 
+import com.donoso.easyflight.hibernate.HibernateSessionFactory;
 import com.donoso.easyflight.modelo.Rol;
 import com.donoso.easyflight.modelo.Usuario;
 import org.hibernate.SessionFactory;
@@ -13,12 +14,10 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrudRolService implements CrudServiceInterface<Rol>{
+public class CrudRolService extends HibernateSessionFactory implements CrudServiceInterface<Rol>{
 
-    private org.hibernate.Session session;
     public CrudRolService(){
-        SessionFactory sf = new Configuration().configure().buildSessionFactory();
-        this.session = sf.openSession();
+        super();
     }
 
     @Override
@@ -74,7 +73,7 @@ public class CrudRolService implements CrudServiceInterface<Rol>{
         Rol r;
 
         try {
-            r = session.createQuery("from Rol r where r.id = :id", Rol.class).setParameter("id", rol.getId()).getSingleResult();
+            r = session.createQuery("from Rol r where r.id = :id", Rol.class).setParameter("id", rol.getId()).uniqueResult();
 
             session.close();
             session.getSessionFactory().close();

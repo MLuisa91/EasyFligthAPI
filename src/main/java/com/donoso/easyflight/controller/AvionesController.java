@@ -2,6 +2,7 @@ package com.donoso.easyflight.controller;
 
 
 import com.donoso.easyflight.modelo.Avion;
+import com.donoso.easyflight.modelo.Usuario;
 import com.donoso.easyflight.servicio.CrudAvionService;
 
 import javax.ws.rs.*;
@@ -27,13 +28,23 @@ public class AvionesController {
         return Response.ok(avion, MediaType.APPLICATION_JSON).build();
     }
 
-    @GET
-    @Path("/")
+    @POST
+    @Path("/search")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAviones() {
-
-        List<Avion> aviones = this.crudAvionService.search(null);
+    public Response searchAviones(Avion avion) {
+        List<Avion> aviones = this.crudAvionService.search(avion);
         return Response.ok(aviones, MediaType.APPLICATION_JSON).build();
+    }
+
+    @GET
+    @Path("/{id}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getAvionById(@PathParam("id") String id) {
+        Avion a = new Avion();
+        a.setId(id);
+        Avion avion = this.crudAvionService.findById(a);
+        return Response.ok(avion, MediaType.APPLICATION_JSON).build();
     }
 
     @PUT

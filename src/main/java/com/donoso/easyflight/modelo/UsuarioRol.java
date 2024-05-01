@@ -5,9 +5,11 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Set;
 
 @Entity(name = "UsuarioRol")
 @Table(name = "usuario_rol")
@@ -23,17 +25,12 @@ public class UsuarioRol {
     @ManyToOne
     @MapsId("usuarioId")
     @JoinColumn(name = "usuario_id")
+    @JsonbTransient
     Usuario usuario;
 
     @ManyToOne
     @MapsId("rolId")
     @JoinColumn(name = "rol_id")
     Rol rol;
-    /*@ManyToOne
-    @JoinColumn(name = "usuario")
-    private Usuario usuario;
-    @OneToMany
-    @JoinColumn(name = "rol")
-    private List<Rol> rol;*/
 
 }

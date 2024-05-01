@@ -1,5 +1,6 @@
 package com.donoso.easyflight.servicio;
 
+import com.donoso.easyflight.hibernate.HibernateSessionFactory;
 import com.donoso.easyflight.modelo.Aeropuerto;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -7,13 +8,10 @@ import org.hibernate.cfg.Configuration;
 
 import java.util.List;
 
-public class CrudAeropuertoService implements CrudServiceInterface<Aeropuerto>{
-
-    private org.hibernate.Session session;
+public class CrudAeropuertoService extends HibernateSessionFactory implements CrudServiceInterface<Aeropuerto>{
 
     public CrudAeropuertoService() {
-        SessionFactory sf = new Configuration().configure().buildSessionFactory();
-        this.session = sf.openSession();
+        super();
     }
 
     @Override
@@ -41,7 +39,7 @@ public class CrudAeropuertoService implements CrudServiceInterface<Aeropuerto>{
     public Aeropuerto findById(Aeropuerto aeropuerto) {
         Aeropuerto a;
         try {
-            a = session.createQuery("from Aeropuerto a where a.id = :id", Aeropuerto.class).setParameter("id", aeropuerto.getId()).getSingleResult();
+            a = session.createQuery("from Aeropuerto a where a.id = :id", Aeropuerto.class).setParameter("id", aeropuerto.getId()).uniqueResult();
 
             session.close();
             session.close();

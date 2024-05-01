@@ -1,5 +1,6 @@
 package com.donoso.easyflight.servicio;
 
+import com.donoso.easyflight.hibernate.HibernateSessionFactory;
 import com.donoso.easyflight.modelo.Oferta;
 import com.donoso.easyflight.modelo.Reserva;
 import com.donoso.easyflight.modelo.Usuario;
@@ -12,12 +13,11 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrudReservaService implements CrudServiceInterface<Reserva> {
+public class CrudReservaService extends HibernateSessionFactory implements CrudServiceInterface<Reserva> {
 
-    private org.hibernate.Session session;
+
     public CrudReservaService(){
-        SessionFactory sf = new Configuration().configure().buildSessionFactory();
-        this.session = sf.openSession();
+        super();
     }
 
     @Override
@@ -77,6 +77,7 @@ public class CrudReservaService implements CrudServiceInterface<Reserva> {
             CriteriaQuery<Reserva> criteriaQuery = cb.createQuery(Reserva.class);
 
             Root<Reserva> reservaRoot = criteriaQuery.from(Reserva.class);
+            criteriaQuery.select(reservaRoot);
             Join<Reserva, Usuario> usuarioJoin =  reservaRoot.join("usuario", JoinType.INNER);
             Join<Reserva, Vuelo> vueloJoin =  reservaRoot.join("vuelo", JoinType.INNER);
             Join<Reserva, Oferta> ofertaJoin =  reservaRoot.join("oferta", JoinType.INNER);
@@ -99,8 +100,8 @@ public class CrudReservaService implements CrudServiceInterface<Reserva> {
                 predicados.add(cb.equal(reservaRoot.get("total"), reserva.getTotal()));
             }
 
-            criteriaQuery.select(reservaRoot);
-            criteriaQuery.where(cb.and(predicados.toArray(new Predicate[predicados.size()])));
+            if(!predicados.isEmpty())
+                criteriaQuery.where(cb.or(predicados.toArray(new Predicate[0])));
 
             Query query = session.createQuery(criteriaQuery);
             reservaList = (List<Reserva>) query.getResultList();
@@ -118,7 +119,7 @@ public class CrudReservaService implements CrudServiceInterface<Reserva> {
     public Reserva findById(Reserva reserva) {
         Reserva r;
         try {
-            r = session.createQuery("from Reserva r where r.id = :id", Reserva.class).setParameter("id", reserva.getId()).getSingleResult();
+            r = session.createQuery("from Reserva r where r.id = :id", Reserva.class).setParameter("id", reserva.getId()).uniqueResult();
 
             session.close();
             session.getSessionFactory().close();

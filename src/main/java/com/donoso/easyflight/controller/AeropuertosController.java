@@ -17,11 +17,10 @@ public class AeropuertosController {
         this.crudAeropuertoService = new CrudAeropuertoService();
     }
 
-    @GET
-    @Path("/")
+    @POST
+    @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getAeropuertos() {
-
+    public Response searchAeropuertos(Aeropuerto aeropuerto) {
         List<Aeropuerto> aeropuertos = this.crudAeropuertoService.search(null);
         return Response.ok(aeropuertos, MediaType.APPLICATION_JSON).build();
     }

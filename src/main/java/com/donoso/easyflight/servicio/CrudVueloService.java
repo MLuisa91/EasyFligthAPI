@@ -1,5 +1,6 @@
 package com.donoso.easyflight.servicio;
 
+import com.donoso.easyflight.hibernate.HibernateSessionFactory;
 import com.donoso.easyflight.modelo.Aeropuerto;
 import com.donoso.easyflight.modelo.Avion;
 import com.donoso.easyflight.modelo.Vuelo;
@@ -11,13 +12,11 @@ import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrudVueloService implements CrudServiceInterface<Vuelo> {
+public class CrudVueloService extends HibernateSessionFactory implements CrudServiceInterface<Vuelo> {
 
-    private org.hibernate.Session session;
 
     public CrudVueloService() {
-        SessionFactory sf = new Configuration().configure().buildSessionFactory();
-        this.session = sf.openSession();
+        super();
     }
 
     @Override
@@ -78,6 +77,7 @@ public class CrudVueloService implements CrudServiceInterface<Vuelo> {
             CriteriaQuery<Vuelo> criteriaQuery = cb.createQuery(Vuelo.class);
 
             Root<Vuelo> vueloRoot = criteriaQuery.from(Vuelo.class);
+            criteriaQuery.select(vueloRoot);
             Join<Vuelo, Aeropuerto> origenJoin = vueloRoot.join("origen", JoinType.INNER);
             Join<Vuelo, Aeropuerto> destinoJoin = vueloRoot.join("destino", JoinType.INNER);
             Join<Vuelo, Avion> avionJoin = vueloRoot.join("avion", JoinType.INNER);
@@ -104,8 +104,8 @@ public class CrudVueloService implements CrudServiceInterface<Vuelo> {
                 predicados.add(cb.equal(vueloRoot.get("horaSalida"), vuelo.getHoraSalida()));
             }
 
-            criteriaQuery.select(vueloRoot);
-            criteriaQuery.where(cb.and(predicados.toArray(new Predicate[predicados.size()])));
+            if(!predicados.isEmpty())
+                criteriaQuery.where(cb.or(predicados.toArray(new Predicate[0])));
 
             Query query = session.createQuery(criteriaQuery);
             vueloList = (List<Vuelo>) query.getResultList();
@@ -124,7 +124,7 @@ public class CrudVueloService implements CrudServiceInterface<Vuelo> {
     public Vuelo findById(Vuelo vuelo) {
         Vuelo v;
         try {
-            v = session.createQuery("from Vuelo v where v.id = :id", Vuelo.class).setParameter("id", vuelo.getId()).getSingleResult();
+            v = session.createQuery("from Vuelo v where v.id = :id", Vuelo.class).setParameter("id", vuelo.getId()).uniqueResult();
 
             session.close();
             session.getSessionFactory().close();

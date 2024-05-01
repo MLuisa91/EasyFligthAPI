@@ -1,5 +1,6 @@
 package com.donoso.easyflight.servicio;
 
+import com.donoso.easyflight.hibernate.HibernateSessionFactory;
 import com.donoso.easyflight.modelo.Extra;
 import com.donoso.easyflight.modelo.Usuario;
 import org.hibernate.SessionFactory;
@@ -13,12 +14,10 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrudExtraService implements CrudServiceInterface<Extra> {
+public class CrudExtraService extends HibernateSessionFactory implements CrudServiceInterface<Extra> {
 
-    private org.hibernate.Session session;
     public CrudExtraService(){
-        SessionFactory sf = new Configuration().configure().buildSessionFactory();
-        this.session = sf.openSession();
+        super();
     }
     @Override
     public void save(Extra extra) {
@@ -109,7 +108,7 @@ public class CrudExtraService implements CrudServiceInterface<Extra> {
     public Extra findById(Extra extra) {
         Extra ex;
         try {
-            ex = session.createQuery("from Extra e where e.id = :id", Extra.class).setParameter("id", extra.getId()).getSingleResult();
+            ex = session.createQuery("from Extra e where e.id = :id", Extra.class).setParameter("id", extra.getId()).uniqueResult();
 
             session.close();
             session.getSessionFactory().close();

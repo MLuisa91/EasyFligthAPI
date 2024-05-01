@@ -39,12 +39,11 @@ public class VuelosController {
         return Response.ok(vuelo, MediaType.APPLICATION_JSON).build();
     }
 
-    @GET
-    @Path("/")
+    @POST
+    @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getVuelos() {
-
-        List<Vuelo> vuelos = this.crudVueloService.search(null);
+    public Response searchVuelos(Vuelo vuelo) {
+        List<Vuelo> vuelos = this.crudVueloService.search(vuelo);
         return Response.ok(vuelos, MediaType.APPLICATION_JSON).build();
     }
 

@@ -36,7 +36,7 @@ public class OfertasController {
         return Response.ok(oferta, MediaType.APPLICATION_JSON).build();
     }
 
-    @GET
+    @POST
     @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchOferta(Oferta oferta) {

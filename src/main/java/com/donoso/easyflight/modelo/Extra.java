@@ -6,7 +6,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
@@ -30,7 +29,6 @@ public class Extra implements Serializable {
     private Double coste;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "extra")
-    @JsonbTransient
     Set<ReservaExtra> reservaExtras;
 
 }

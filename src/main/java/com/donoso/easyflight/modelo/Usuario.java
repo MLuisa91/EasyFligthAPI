@@ -1,9 +1,11 @@
 package com.donoso.easyflight.modelo;
 
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Set;
@@ -36,6 +38,5 @@ public class Usuario implements Serializable {
     private Pais pais;
 
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "usuario")
-    @JsonbTransient
     Set<UsuarioRol> usuarioRol;
 }

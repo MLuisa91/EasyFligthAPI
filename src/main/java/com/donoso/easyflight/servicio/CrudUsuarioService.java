@@ -1,33 +1,33 @@
 package com.donoso.easyflight.servicio;
 
-import com.donoso.easyflight.modelo.Usuario;
+import com.donoso.easyflight.hibernate.HibernateSessionFactory;
+import com.donoso.easyflight.modelo.*;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrudUsuarioService implements CrudServiceInterface<Usuario> {
+public class CrudUsuarioService extends HibernateSessionFactory implements CrudServiceInterface<Usuario> {
 
-    private final org.hibernate.Session session;
-
-    public CrudUsuarioService() {
-        SessionFactory sf = new Configuration().configure().buildSessionFactory();
-        this.session = sf.openSession();
+    private CrudUsuarioRolService crudUsuarioRolService;
+    public CrudUsuarioService(){
+        super();
     }
 
     @Override
     public void save(Usuario usuario) {
         try {
             session.getTransaction().begin();
-
             session.persist(usuario);
             session.getTransaction().commit();
+
+            usuario.getUsuarioRol().forEach(usuarioRol -> {
+                crudUsuarioRolService.save(new UsuarioRol(usuarioRol.getId(),usuario,new Rol(usuarioRol.getId().getRolId(),null,null)));
+            });
+
         } catch (Exception e) {
             throw new RuntimeException(e);
         } finally {
@@ -39,10 +39,21 @@ public class CrudUsuarioService implements CrudServiceInterface<Usuario> {
     @Override
     public void update(Usuario usuario) {
         try {
-            if (this.findById(usuario) != null) {
+            Usuario oldUser = this.findById(usuario);
+            if (oldUser != null) {
+                this.openSession();
                 session.getTransaction().begin();
                 session.update(usuario);
                 session.getTransaction().commit();
+
+                oldUser.getUsuarioRol().forEach(usuarioRol -> {
+                    crudUsuarioRolService.delete(usuarioRol);
+                });
+
+                usuario.getUsuarioRol().forEach(usuarioRol -> {
+                    crudUsuarioRolService.save(new UsuarioRol(usuarioRol.getId(),usuario,new Rol(usuarioRol.getId().getRolId(),null,null)));
+                });
+
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -55,10 +66,17 @@ public class CrudUsuarioService implements CrudServiceInterface<Usuario> {
     @Override
     public void delete(Usuario usuario) {
         try {
-            if (this.findById(usuario) != null) {
+            usuario = this.findById(usuario);
+
+            if (usuario != null) {
+                usuario.getUsuarioRol().forEach(usuarioRol -> {
+                    crudUsuarioRolService.delete(usuarioRol);
+                });
+                this.openSession();
                 session.getTransaction().begin();
                 session.delete(usuario);
                 session.getTransaction().commit();
+
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -78,29 +96,32 @@ public class CrudUsuarioService implements CrudServiceInterface<Usuario> {
             CriteriaQuery<Usuario> criteriaQuery = cb.createQuery(Usuario.class);
 
             Root<Usuario> usuarioRoot = criteriaQuery.from(Usuario.class);
-
-            if (usuario.getIdDni() != null)
-                predicados.add(cb.equal(usuarioRoot.get("idDni"), usuario.getIdDni()));
-            if (usuario.getNombre() != null)
-                predicados.add(cb.equal(usuarioRoot.get("nombre"), usuario.getNombre()));
-            if (usuario.getApellidos() != null) {
-                predicados.add(cb.like(usuarioRoot.get("apellidos"), "%".concat(usuario.getApellidos()).concat("%")));
-            }
-            if (usuario.getPais() != null) {
-                predicados.add(cb.equal(usuarioRoot.get("pais"), usuario.getPais()));
-            }
-            if (usuario.getEmail() != null) {
-                predicados.add(cb.like(usuarioRoot.get("email"), "%".concat(usuario.getEmail()).concat("%")));
-            }
-            if (usuario.getUser() != null) {
-                predicados.add(cb.like(usuarioRoot.get("user"), "%".concat(usuario.getUser()).concat("%")));
-            }
-            if (usuario.getTelefono() != null) {
-                predicados.add(cb.like(usuarioRoot.get("telefono"), "%".concat(usuario.getTelefono()).concat("%")));
-            }
-
             criteriaQuery.select(usuarioRoot);
-            criteriaQuery.where(cb.and(predicados.toArray(new Predicate[predicados.size()])));
+            Join<Usuario, Pais> paisJoin =  usuarioRoot.join("pais", JoinType.INNER);
+            if(usuario!=null) {
+                if (usuario.getIdDni() != null)
+                    predicados.add(cb.equal(usuarioRoot.get("idDni"), usuario.getIdDni()));
+                if (usuario.getNombre() != null)
+                    predicados.add(cb.equal(usuarioRoot.get("nombre"), usuario.getNombre()));
+                if (usuario.getApellidos() != null) {
+                    predicados.add(cb.like(usuarioRoot.get("apellidos"), "%".concat(usuario.getApellidos()).concat("%")));
+                }
+                if (usuario.getPais() != null) {
+                    predicados.add(cb.like(paisJoin.get("nombre"), "%".concat(usuario.getPais().getNombre()).concat("%")));
+                }
+                if (usuario.getEmail() != null) {
+                    predicados.add(cb.like(usuarioRoot.get("email"), "%".concat(usuario.getEmail()).concat("%")));
+                }
+                if (usuario.getUser() != null) {
+                    predicados.add(cb.like(usuarioRoot.get("user"), "%".concat(usuario.getUser()).concat("%")));
+                }
+                if (usuario.getTelefono() != null) {
+                    predicados.add(cb.like(usuarioRoot.get("telefono"), "%".concat(usuario.getTelefono()).concat("%")));
+                }
+            }
+
+            if(!predicados.isEmpty())
+                criteriaQuery.where(cb.or(predicados.toArray(new Predicate[0])));
 
             Query query = session.createQuery(criteriaQuery);
             usuarioList = (List<Usuario>) query.getResultList();
@@ -135,7 +156,8 @@ public class CrudUsuarioService implements CrudServiceInterface<Usuario> {
     public Usuario findById(Usuario usuario) {
         Usuario user;
         try {
-            user = session.createQuery("from Usuario u where u.id = :id", Usuario.class).setParameter("id", usuario.getIdDni()).getSingleResult();
+            user = session.
+                    createQuery("from Usuario u where u.id = :id", Usuario.class).setParameter("id", usuario.getIdDni()).uniqueResult();
 
             session.close();
             session.getSessionFactory().close();

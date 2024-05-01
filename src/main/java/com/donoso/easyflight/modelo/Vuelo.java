@@ -1,10 +1,7 @@
 package com.donoso.easyflight.modelo;
 
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -34,7 +31,9 @@ public class Vuelo implements Serializable {
     private LocalTime horaSalida;
     @Column(name = "horaLlegada")
     private LocalTime horaLlegada;
+
     @OneToOne
     @JoinColumn(name = "avion")
     private Avion avion;
+
 }

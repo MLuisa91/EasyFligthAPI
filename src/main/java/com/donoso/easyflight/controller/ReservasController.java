@@ -38,7 +38,7 @@ public class ReservasController {
         return Response.ok(reserva, MediaType.APPLICATION_JSON).build();
     }
 
-    @GET
+    @POST
     @Path("/")
     @Produces(MediaType.APPLICATION_JSON)
     public Response getReservas() {

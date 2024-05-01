@@ -1,5 +1,6 @@
 package com.donoso.easyflight.servicio;
 
+import com.donoso.easyflight.hibernate.HibernateSessionFactory;
 import com.donoso.easyflight.modelo.Oferta;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
@@ -12,12 +13,10 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CrudOfertaService implements CrudServiceInterface<Oferta>{
+public class CrudOfertaService extends HibernateSessionFactory implements CrudServiceInterface<Oferta>{
 
-    private org.hibernate.Session session;
     public CrudOfertaService(){
-        SessionFactory sf = new Configuration().configure().buildSessionFactory();
-        this.session = sf.openSession();
+        super();
     }
 
     @Override
@@ -39,6 +38,7 @@ public class CrudOfertaService implements CrudServiceInterface<Oferta>{
     public void update(Oferta oferta) {
         try{
             if (this.findById(oferta) != null) {
+                openSession();
                 session.getTransaction().begin();
                 session.update(oferta);
                 session.getTransaction().commit();
@@ -55,6 +55,7 @@ public class CrudOfertaService implements CrudServiceInterface<Oferta>{
     public void delete(Oferta oferta) {
         try{
             if (this.findById(oferta) != null) {
+                openSession();
                 session.getTransaction().begin();
                 session.delete(oferta);
                 session.getTransaction().commit();
@@ -77,6 +78,7 @@ public class CrudOfertaService implements CrudServiceInterface<Oferta>{
             CriteriaQuery<Oferta> criteriaQuery = cb.createQuery(Oferta.class);
 
             Root<Oferta> ofertaRoot = criteriaQuery.from(Oferta.class);
+            criteriaQuery.select(ofertaRoot);
 
             if (oferta.getId()!=null) {
                 predicados.add(cb.equal(ofertaRoot.get("id"), oferta.getId()));
@@ -96,8 +98,8 @@ public class CrudOfertaService implements CrudServiceInterface<Oferta>{
                 predicados.add(cb.equal(ofertaRoot.get("fechaFinal"), oferta.getFechaFinal()));
             }
 
-            criteriaQuery.select(ofertaRoot);
-            criteriaQuery.where(cb.and(predicados.toArray(new Predicate[predicados.size()])));
+            if(!predicados.isEmpty())
+                criteriaQuery.where(cb.or(predicados.toArray(new Predicate[0])));
 
             Query query = session.createQuery(criteriaQuery);
             ofertaList = (List<Oferta>) query.getResultList();
@@ -116,7 +118,7 @@ public class CrudOfertaService implements CrudServiceInterface<Oferta>{
         Oferta o;
 
         try {
-            o = session.createQuery("from Oferta o where o.id = :id", Oferta.class).setParameter("id", oferta.getId()).getSingleResult();
+            o = session.createQuery("from Oferta o where o.id = :id", Oferta.class).setParameter("id", oferta.getId()).uniqueResult();
 
             session.close();
             session.getSessionFactory().close();

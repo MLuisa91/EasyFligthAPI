@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.json.bind.annotation.JsonbTransient;
 import javax.persistence.*;
 import java.util.List;
 
@@ -22,6 +23,7 @@ public class ReservaExtra {
     @ManyToOne
     @MapsId("reservaId")
     @JoinColumn(name = "reserva_id")
+    @JsonbTransient
     Reserva reserva;
 
     @ManyToOne

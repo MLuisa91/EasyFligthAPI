@@ -37,4 +37,7 @@ public class Reserva {
     @OneToMany(fetch = FetchType.EAGER, mappedBy = "reserva")
     Set<ReservaExtra> reservaExtras;
 
+    @OneToMany(fetch = FetchType.EAGER, mappedBy = "reserva")
+    Set<ReservaViajero> reservaViajeros;
+
 }

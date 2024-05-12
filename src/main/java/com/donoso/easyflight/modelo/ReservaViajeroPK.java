@@ -14,13 +14,11 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Getter
 @Setter
-public class UsuarioRolPK implements Serializable {
+public class ReservaViajeroPK implements Serializable {
 
-
-    @Column(name = "usuario_id")
-    private Integer usuarioId;
-
-    @Column(name = "rol_id")
-    private Integer rolId;
+    @Column(name = "reserva_id")
+    private String reservaId;
+    @Column(name = "viajero_id")
+    private Integer viajeroId;
 
 }

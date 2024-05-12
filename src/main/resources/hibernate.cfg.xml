@@ -22,5 +22,7 @@
         <mapping class="com.donoso.easyflight.modelo.Extra"/>
         <mapping class="com.donoso.easyflight.modelo.ReservaExtra"/>
         <mapping class="com.donoso.easyflight.modelo.UsuarioRol"/>
+        <mapping class="com.donoso.easyflight.modelo.ReservaViajero"/>
+        <mapping class="com.donoso.easyflight.modelo.Viajero"/>
     </session-factory>
 </hibernate-configuration>

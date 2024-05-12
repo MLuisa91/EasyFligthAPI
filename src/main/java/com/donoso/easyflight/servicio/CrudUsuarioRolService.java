@@ -9,8 +9,6 @@ import java.util.List;
 
 public class CrudUsuarioRolService extends HibernateSessionFactory implements CrudServiceInterface<UsuarioRol> {
 
-
-
     public CrudUsuarioRolService() {
         super();
     }

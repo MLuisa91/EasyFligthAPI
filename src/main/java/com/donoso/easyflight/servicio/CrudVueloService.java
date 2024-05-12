@@ -103,9 +103,52 @@ public class CrudVueloService extends HibernateSessionFactory implements CrudSer
             if(vuelo.getHoraSalida()!=null){
                 predicados.add(cb.equal(vueloRoot.get("horaSalida"), vuelo.getHoraSalida()));
             }
+            if(vuelo.getPrecio()!=null){
+                predicados.add(cb.equal(vueloRoot.get("precio"), vuelo.getPrecio()));
+            }
 
             if(!predicados.isEmpty())
                 criteriaQuery.where(cb.or(predicados.toArray(new Predicate[0])));
+
+            Query query = session.createQuery(criteriaQuery);
+            vueloList = (List<Vuelo>) query.getResultList();
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        } finally {
+            session.close();
+            session.getSessionFactory().close();
+        }
+
+        return vueloList;
+
+    }
+
+    public List<Vuelo> searchLimitado(Vuelo vuelo) {
+        List<Vuelo> vueloList = null;
+
+        try {
+            List<Predicate> predicados = new ArrayList<>();
+
+            CriteriaBuilder cb = session.getCriteriaBuilder();
+            CriteriaQuery<Vuelo> criteriaQuery = cb.createQuery(Vuelo.class);
+
+            Root<Vuelo> vueloRoot = criteriaQuery.from(Vuelo.class);
+            criteriaQuery.select(vueloRoot);
+            Join<Vuelo, Aeropuerto> origenJoin = vueloRoot.join("origen", JoinType.INNER);
+            Join<Vuelo, Aeropuerto> destinoJoin = vueloRoot.join("destino", JoinType.INNER);
+
+            if (vuelo.getOrigen() != null) {
+                predicados.add(cb.like(origenJoin.get("nombre"), "%".concat(vuelo.getOrigen().getNombre()).concat("%")));
+            }
+            if (vuelo.getDestino() != null) {
+                predicados.add(cb.like(destinoJoin.get("nombre"), "%".concat(vuelo.getDestino().getNombre()).concat("%")));
+            }
+            if(vuelo.getFechaSalida()!=null){
+                predicados.add(cb.equal(vueloRoot.get("fechaSalida"), vuelo.getFechaSalida()));
+            }
+
+            if(!predicados.isEmpty())
+                criteriaQuery.where(cb.and(predicados.toArray(new Predicate[0])));
 
             Query query = session.createQuery(criteriaQuery);
             vueloList = (List<Vuelo>) query.getResultList();

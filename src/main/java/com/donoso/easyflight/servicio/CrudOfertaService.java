@@ -2,14 +2,13 @@ package com.donoso.easyflight.servicio;
 
 import com.donoso.easyflight.hibernate.HibernateSessionFactory;
 import com.donoso.easyflight.modelo.Oferta;
+import com.donoso.easyflight.modelo.Vuelo;
 import org.hibernate.SessionFactory;
 import org.hibernate.cfg.Configuration;
 
+import javax.persistence.JoinColumn;
 import javax.persistence.Query;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -78,6 +77,7 @@ public class CrudOfertaService extends HibernateSessionFactory implements CrudSe
             CriteriaQuery<Oferta> criteriaQuery = cb.createQuery(Oferta.class);
 
             Root<Oferta> ofertaRoot = criteriaQuery.from(Oferta.class);
+            Join<Oferta, Vuelo> vueloJoin = ofertaRoot.join("vuelo", JoinType.INNER);
             criteriaQuery.select(ofertaRoot);
 
             if (oferta.getId()!=null) {
@@ -96,6 +96,9 @@ public class CrudOfertaService extends HibernateSessionFactory implements CrudSe
             }
             if(oferta.getFechaFinal()!=null){
                 predicados.add(cb.equal(ofertaRoot.get("fechaFinal"), oferta.getFechaFinal()));
+            }
+            if (oferta.getVuelo() != null) {
+                predicados.add(cb.like(vueloJoin.get("vuelo"), "%".concat(oferta.getVuelo().getId()).concat("%")));
             }
 
             if(!predicados.isEmpty())

@@ -47,6 +47,14 @@ public class VuelosController {
         return Response.ok(vuelos, MediaType.APPLICATION_JSON).build();
     }
 
+    @POST
+    @Path("/searchLimitado")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchVuelosLimitado(Vuelo vuelo) {
+        List<Vuelo> vuelos = this.crudVueloService.searchLimitado(vuelo);
+        return Response.ok(vuelos, MediaType.APPLICATION_JSON).build();
+    }
+
     @PUT
     @Path("/actualizar")
     @Produces(MediaType.APPLICATION_JSON)

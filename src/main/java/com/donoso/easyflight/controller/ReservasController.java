@@ -1,6 +1,7 @@
 package com.donoso.easyflight.controller;
 
 import com.donoso.easyflight.modelo.Reserva;
+import com.donoso.easyflight.modelo.Usuario;
 import com.donoso.easyflight.modelo.Vuelo;
 import com.donoso.easyflight.servicio.CrudReservaService;
 
@@ -39,11 +40,11 @@ public class ReservasController {
     }
 
     @POST
-    @Path("/")
+    @Path("/search")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getReservas() {
+    public Response searchReservas(Reserva reserva) {
 
-        List<Reserva> reservas = this.crudReservaService.search(null);
+        List<Reserva> reservas = this.crudReservaService.search(reserva);
         return Response.ok(reservas, MediaType.APPLICATION_JSON).build();
     }
 
@@ -64,4 +65,15 @@ public class ReservasController {
         this.crudReservaService.delete(r);
         return Response.ok().build();
     }
+
+    /*@GET
+    @Path("/{usuario}")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response getReservaByUsuario(@PathParam("usuario") Usuario usuario) {
+        Reserva reserva = new Reserva();
+        reserva.setUsuario(usuario);
+        Reserva r = this.crudReservaService.findByUsuario(reserva);
+        return Response.ok(r, MediaType.APPLICATION_JSON).build();
+    }*/
 }

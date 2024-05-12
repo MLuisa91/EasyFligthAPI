@@ -15,17 +15,20 @@ public class CrudUsuarioService extends HibernateSessionFactory implements CrudS
     private CrudUsuarioRolService crudUsuarioRolService;
     public CrudUsuarioService(){
         super();
+        this.crudUsuarioRolService = new CrudUsuarioRolService();
     }
 
     @Override
     public void save(Usuario usuario) {
         try {
+            Usuario user = null;
             session.getTransaction().begin();
-            session.persist(usuario);
+            user= (Usuario) session.merge(usuario);
             session.getTransaction().commit();
 
+            Usuario finalUser = user;
             usuario.getUsuarioRol().forEach(usuarioRol -> {
-                crudUsuarioRolService.save(new UsuarioRol(usuarioRol.getId(),usuario,new Rol(usuarioRol.getId().getRolId(),null,null)));
+                crudUsuarioRolService.save(new UsuarioRol(new UsuarioRolPK(finalUser.getId(), usuarioRol.getRol().getId()), finalUser,new Rol(usuarioRol.getRol().getId(),null,null)));
             });
 
         } catch (Exception e) {
@@ -99,8 +102,8 @@ public class CrudUsuarioService extends HibernateSessionFactory implements CrudS
             criteriaQuery.select(usuarioRoot);
             Join<Usuario, Pais> paisJoin =  usuarioRoot.join("pais", JoinType.INNER);
             if(usuario!=null) {
-                if (usuario.getIdDni() != null)
-                    predicados.add(cb.equal(usuarioRoot.get("idDni"), usuario.getIdDni()));
+                if (usuario.getDni() != null)
+                    predicados.add(cb.equal(usuarioRoot.get("dni"), usuario.getDni()));
                 if (usuario.getNombre() != null)
                     predicados.add(cb.equal(usuarioRoot.get("nombre"), usuario.getNombre()));
                 if (usuario.getApellidos() != null) {
@@ -157,7 +160,7 @@ public class CrudUsuarioService extends HibernateSessionFactory implements CrudS
         Usuario user;
         try {
             user = session.
-                    createQuery("from Usuario u where u.id = :id", Usuario.class).setParameter("id", usuario.getIdDni()).uniqueResult();
+                    createQuery("from Usuario u where u.id = :id", Usuario.class).setParameter("id", usuario.getId()).uniqueResult();
 
             session.close();
             session.getSessionFactory().close();

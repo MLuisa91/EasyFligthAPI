@@ -19,8 +19,12 @@ import java.util.Set;
 public class Usuario implements Serializable {
 
     @Id
-    @Column(name = "id")
-    private String idDni;
+    @Column(name = "id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
+    private Integer id;
+    @Column(name = "dni")
+    private String dni;
     @Column(name = "nombre")
     private String nombre;
     @Column(name = "apellidos")

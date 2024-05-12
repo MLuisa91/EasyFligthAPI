@@ -31,6 +31,8 @@ public class Vuelo implements Serializable {
     private LocalTime horaSalida;
     @Column(name = "horaLlegada")
     private LocalTime horaLlegada;
+    @Column(name = "precio")
+    private Double precio;
 
     @OneToOne
     @JoinColumn(name = "avion")

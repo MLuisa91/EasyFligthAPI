@@ -82,23 +82,26 @@ public class CrudReservaService extends HibernateSessionFactory implements CrudS
             Join<Reserva, Vuelo> vueloJoin =  reservaRoot.join("vuelo", JoinType.INNER);
             Join<Reserva, Oferta> ofertaJoin =  reservaRoot.join("oferta", JoinType.INNER);
 
-            if (reserva.getId()!=null) {
-                predicados.add(cb.equal(reservaRoot.get("id"), reserva.getId()));
+            if(reserva != null){
+                if (reserva.getId()!=null) {
+                    predicados.add(cb.equal(reservaRoot.get("id"), reserva.getId()));
+                }
+                if (reserva.getUsuario()!=null)
+                    predicados.add(cb.like(usuarioJoin.get("idDni"), "%".concat(reserva.getUsuario().getId().toString()).concat("%")));
+                if(reserva.getVuelo()!=null){
+                    predicados.add(cb.like(vueloJoin.get("id"), "%".concat(reserva.getVuelo().getId()).concat("%")));
+                }
+                if(reserva.getOferta()!=null){
+                    predicados.add(cb.like(ofertaJoin.get("nombre"), "%".concat(reserva.getOferta().getNombre()).concat("%")));
+                }
+                if(reserva.getNumPasajeros()!=null){
+                    predicados.add(cb.equal(reservaRoot.get("numPasajeros"), reserva.getNumPasajeros()));
+                }
+                if(reserva.getTotal()!=null){
+                    predicados.add(cb.equal(reservaRoot.get("total"), reserva.getTotal()));
+                }
             }
-            if (reserva.getUsuario()!=null)
-                predicados.add(cb.like(usuarioJoin.get("idDni"), "%".concat(reserva.getUsuario().getIdDni()).concat("%")));
-            if(reserva.getVuelo()!=null){
-                predicados.add(cb.like(vueloJoin.get("id"), "%".concat(reserva.getVuelo().getId()).concat("%")));
-            }
-            if(reserva.getOferta()!=null){
-                predicados.add(cb.like(ofertaJoin.get("nombre"), "%".concat(reserva.getOferta().getNombre()).concat("%")));
-            }
-            if(reserva.getNumPasajeros()!=null){
-                predicados.add(cb.equal(reservaRoot.get("numPasajeros"), reserva.getNumPasajeros()));
-            }
-            if(reserva.getTotal()!=null){
-                predicados.add(cb.equal(reservaRoot.get("total"), reserva.getTotal()));
-            }
+
 
             if(!predicados.isEmpty())
                 criteriaQuery.where(cb.or(predicados.toArray(new Predicate[0])));
@@ -129,4 +132,20 @@ public class CrudReservaService extends HibernateSessionFactory implements CrudS
 
         return r;
     }
+
+   /* public Reserva findByUsuario(Reserva reserva) {
+        Reserva r;
+        try {
+            r = session.createQuery("from Reserva r where r.usuario = :usuario", Reserva.class)
+                    .setParameter("usuario", reserva.getUsuario())
+                    .getSingleResult();
+
+            session.close();
+            session.getSessionFactory().close();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        return r;
+    }*/
 }

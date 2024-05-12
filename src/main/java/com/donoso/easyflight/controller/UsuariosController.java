@@ -30,9 +30,9 @@ public class UsuariosController {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getUsuarioById(@PathParam("id") String id) {
+    public Response getUsuarioById(@PathParam("id") Integer id) {
         Usuario u = new Usuario();
-        u.setIdDni(id);
+        u.setId(id);
         Usuario usuario = this.usuarioService.findById(u);
         return Response.ok(usuario, MediaType.APPLICATION_JSON).build();
     }
@@ -68,9 +68,9 @@ public class UsuariosController {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteUsuario(@PathParam("id") String id) {
+    public Response deleteUsuario(@PathParam("id") Integer id) {
         Usuario u = new Usuario();
-        u.setIdDni(id);
+        u.setId(id);
         this.usuarioService.delete(u);
         return Response.ok().build();
     }

@@ -1,56 +1,77 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
-  <groupId>com.donoso.easyflight</groupId>
-  <artifactId>easyflight</artifactId>
-  <packaging>war</packaging>
-  <properties>
-    <maven.compiler.source>8</maven.compiler.source>
-    <maven.compiler.target>8</maven.compiler.target>
-    <hibernate.version>5.3.36.Final</hibernate.version>
-  </properties>
-  <version>1.0-SNAPSHOT</version>
-  <name>Easy Flight Maven Webapp</name>
-  <url>http://maven.apache.org</url>
-  <dependencies>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <version>3.8.1</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.glassfish.jersey.bundles</groupId>
-      <artifactId>jaxrs-ri</artifactId>
-      <version>2.29</version>
-    </dependency>
-    <!-- Hibernate Core 5.2.x -->
-    <dependency>
-      <groupId>org.projectlombok</groupId>
-      <artifactId>lombok</artifactId>
-      <version>1.18.32</version>
-      <scope>provided</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.hibernate</groupId>
-      <artifactId>hibernate-core</artifactId>
-      <version>${hibernate.version}</version>
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>com.donoso.easyflight</groupId>
+    <artifactId>easyflight</artifactId>
+    <packaging>war</packaging>
+    <properties>
+        <maven.compiler.source>8</maven.compiler.source>
+        <maven.compiler.target>8</maven.compiler.target>
+        <hibernate.version>5.3.36.Final</hibernate.version>
+    </properties>
+    <version>1.0-SNAPSHOT</version>
+    <name>Easy Flight Maven Webapp</name>
+    <url>http://maven.apache.org</url>
+    <dependencies>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>3.8.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.bundles</groupId>
+            <artifactId>jaxrs-ri</artifactId>
+            <version>2.29</version>
+        </dependency>
+        <!--Zxing, para códigoQR-->
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+            <version>3.4.1</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>javase</artifactId>
+            <version>3.4.1</version>
+        </dependency>
 
-    </dependency>
-    <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>8.0.31</version>
-    </dependency>
-    <dependency>
-      <groupId>jakarta.persistence</groupId>
-      <artifactId>jakarta.persistence-api</artifactId>
-      <version>3.0.0</version>
-    </dependency>
-  </dependencies>
-  <build>
-    <finalName>easyflight</finalName>
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.32</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <!--Hibernate para la capa de persistencia-->
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-core</artifactId>
+            <version>${hibernate.version}</version>
 
-  </build>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.31</version>
+        </dependency>
+        <dependency>
+            <!--Jakarta para la capa de persistencia-->
+            <groupId>jakarta.persistence</groupId>
+            <artifactId>jakarta.persistence-api</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>2.11.0</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>easyflight</finalName>
+      <plugins>
+
+      </plugins>
+    </build>
 
 </project>

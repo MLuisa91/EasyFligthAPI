@@ -17,7 +17,7 @@ import java.util.List;
 public class ReservaExtraPK implements Serializable {
 
     @Column(name = "reserva_id")
-    private String reservaId;
+    private Integer reservaId;
     @Column(name = "extra_id")
     private Integer extraId;
 

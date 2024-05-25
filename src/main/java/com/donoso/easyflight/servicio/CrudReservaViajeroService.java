@@ -1,25 +1,25 @@
 package com.donoso.easyflight.servicio;
 
 import com.donoso.easyflight.hibernate.HibernateSessionFactory;
+import com.donoso.easyflight.modelo.ReservaExtra;
+import com.donoso.easyflight.modelo.ReservaViajero;
 import com.donoso.easyflight.modelo.UsuarioRol;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 
 import java.util.List;
 
-public class CrudUsuarioRolService extends HibernateSessionFactory implements CrudServiceInterface<UsuarioRol> {
+public class CrudReservaViajeroService extends HibernateSessionFactory implements CrudServiceInterface<ReservaViajero> {
 
-    public CrudUsuarioRolService() {
+    public CrudReservaViajeroService() {
         super();
     }
 
     @Override
-    public void save(UsuarioRol usuarioRol) {
+    public void save(ReservaViajero reservaViajero) {
         try {
             openSession();
             session.getTransaction().begin();
 
-            session.save(usuarioRol);
+            session.save(reservaViajero);
             session.getTransaction().commit();
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -30,17 +30,17 @@ public class CrudUsuarioRolService extends HibernateSessionFactory implements Cr
     }
 
     @Override
-    public void update(UsuarioRol usuarioRol) {
+    public void update(ReservaViajero reservaViajero) {
 
     }
 
     @Override
-    public void delete(UsuarioRol usuarioRol) {
+    public void delete(ReservaViajero reservaViajero) {
         try {
             openSession();
             session.getTransaction().begin();
-            session.createQuery("delete from UsuarioRol u where u.usuario.id = :id")
-                    .setParameter("id", usuarioRol.getId().getUsuarioId())
+            session.createQuery("delete from ReservaViajero r where r.reserva.id = :id")
+                    .setParameter("id", reservaViajero.getReserva().getId())
                     .executeUpdate();
             session.getTransaction().commit();
 
@@ -53,12 +53,12 @@ public class CrudUsuarioRolService extends HibernateSessionFactory implements Cr
     }
 
     @Override
-    public List<UsuarioRol> search(UsuarioRol usuarioRol) {
+    public List<ReservaViajero> search(ReservaViajero usuarioRol) {
         return null;
     }
 
     @Override
-    public UsuarioRol findById(UsuarioRol usuarioRol) {
+    public ReservaViajero findById(ReservaViajero usuarioRol) {
         return null;
     }
 }

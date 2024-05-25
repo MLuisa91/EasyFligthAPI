@@ -44,6 +44,14 @@ public class OfertasController {
         return Response.ok(ofertas, MediaType.APPLICATION_JSON).build();
     }
 
+    @POST
+    @Path("/ofertasValidas")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response searchOfertasValidas(Oferta oferta) {
+        List<Oferta> ofertas = this.crudOfertaService.searchOfertasValidas(oferta);
+        return Response.ok(ofertas, MediaType.APPLICATION_JSON).build();
+    }
+
     @PUT
     @Path("/actualizar")
     @Produces(MediaType.APPLICATION_JSON)

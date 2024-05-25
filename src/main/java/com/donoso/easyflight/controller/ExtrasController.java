@@ -9,7 +9,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
 
-@Path("/extras")
+    @Path("/extras")
 public class ExtrasController {
 
     private CrudExtraService crudExtraService;

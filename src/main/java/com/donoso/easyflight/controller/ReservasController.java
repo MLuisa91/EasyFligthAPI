@@ -4,10 +4,16 @@ import com.donoso.easyflight.modelo.Reserva;
 import com.donoso.easyflight.modelo.Usuario;
 import com.donoso.easyflight.modelo.Vuelo;
 import com.donoso.easyflight.servicio.CrudReservaService;
+import com.google.zxing.WriterException;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.StreamingOutput;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
 @Path("/reservas")
@@ -22,7 +28,6 @@ public class ReservasController {
 
     @POST
     @Path("/insertar")
-    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response saveReserva(Reserva reserva) {
         this.crudReservaService.save(reserva);
@@ -32,7 +37,7 @@ public class ReservasController {
     @GET
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getReserva(@PathParam("id") String id) {
+    public Response getReserva(@PathParam("id") Integer id) {
         Reserva r = new Reserva();
         r.setId(id);
         Reserva reserva = this.crudReservaService.findById(r);
@@ -41,9 +46,9 @@ public class ReservasController {
 
     @POST
     @Path("/search")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response searchReservas(Reserva reserva) {
-
         List<Reserva> reservas = this.crudReservaService.search(reserva);
         return Response.ok(reservas, MediaType.APPLICATION_JSON).build();
     }
@@ -59,21 +64,29 @@ public class ReservasController {
     @DELETE
     @Path("/{id}")
     @Produces(MediaType.APPLICATION_JSON)
-    public Response deleteReserva(@PathParam("id") String id) {
+    public Response deleteReserva(@PathParam("id") Integer id) {
         Reserva r = new Reserva();
         r.setId(id);
         this.crudReservaService.delete(r);
         return Response.ok().build();
     }
 
-    /*@GET
-    @Path("/{usuario}")
+    @GET
+    @Path("/reservas-user/{usuario}")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response getReservaByUsuario(@PathParam("usuario") Usuario usuario) {
-        Reserva reserva = new Reserva();
-        reserva.setUsuario(usuario);
-        Reserva r = this.crudReservaService.findByUsuario(reserva);
+    public Response getReservaByUsuario(@PathParam("usuario") Integer usuario) {
+        List<Reserva> r = this.crudReservaService.findByUsuario(usuario);
         return Response.ok(r, MediaType.APPLICATION_JSON).build();
-    }*/
+    }
+
+    @GET
+    @Path("/generateQr/{id}")
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    public Response generarQrReservas(@PathParam("id") Integer id) {
+        InputStream file = this.crudReservaService.generateQrImage(id);
+        return Response.ok(file, MediaType.APPLICATION_OCTET_STREAM)
+                .header("Content-Disposition", "attachment; filename=qr.jpg")
+                .build();
+    }
 }

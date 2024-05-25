@@ -5,10 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity(name = "Respaldo")
@@ -19,7 +16,9 @@ import java.time.LocalDate;
 @Setter
 public class Respaldo {
     @Id
-    @Column(name = "id")
+    @Column(name = "id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     private Integer id;
     @Column(name = "nombre")
     private String nombre;
@@ -27,4 +26,6 @@ public class Respaldo {
     private LocalDate fechaGenerada;
     @Column(name = "fechaRestaurada")
     private LocalDate fechaRestaurada;
+    @Column(name = "generada")
+    private Boolean generada;
 }

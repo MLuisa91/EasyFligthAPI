@@ -4,11 +4,10 @@ import com.donoso.easyflight.hibernate.HibernateSessionFactory;
 import com.donoso.easyflight.modelo.Aeropuerto;
 import com.donoso.easyflight.modelo.Avion;
 import com.donoso.easyflight.modelo.Vuelo;
-import org.hibernate.SessionFactory;
-import org.hibernate.cfg.Configuration;
 
 import javax.persistence.Query;
 import javax.persistence.criteria.*;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,14 +20,14 @@ public class CrudVueloService extends HibernateSessionFactory implements CrudSer
 
     @Override
     public void save(Vuelo vuelo) {
-        try{
+        try {
             session.getTransaction().begin();
 
             session.persist(vuelo);
             session.getTransaction().commit();
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             session.close();
             session.getSessionFactory().close();
         }
@@ -36,15 +35,15 @@ public class CrudVueloService extends HibernateSessionFactory implements CrudSer
 
     @Override
     public void update(Vuelo vuelo) {
-        try{
+        try {
             if (this.findById(vuelo) != null) {
                 session.getTransaction().begin();
                 session.update(vuelo);
                 session.getTransaction().commit();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             session.close();
             session.getSessionFactory().close();
         }
@@ -52,15 +51,15 @@ public class CrudVueloService extends HibernateSessionFactory implements CrudSer
 
     @Override
     public void delete(Vuelo vuelo) {
-        try{
+        try {
             if (this.findById(vuelo) != null) {
                 session.getTransaction().begin();
                 session.delete(vuelo);
                 session.getTransaction().commit();
             }
-        }catch (Exception e){
+        } catch (Exception e) {
             throw new RuntimeException(e);
-        }finally {
+        } finally {
             session.close();
             session.getSessionFactory().close();
         }
@@ -94,20 +93,20 @@ public class CrudVueloService extends HibernateSessionFactory implements CrudSer
             if (vuelo.getDestino() != null) {
                 predicados.add(cb.like(destinoJoin.get("nombre"), "%".concat(vuelo.getDestino().getNombre()).concat("%")));
             }
-            if(vuelo.getFechaSalida()!=null){
+            if (vuelo.getFechaSalida() != null) {
                 predicados.add(cb.equal(vueloRoot.get("fechaSalida"), vuelo.getFechaSalida()));
             }
-            if(vuelo.getHoraLlegada()!=null){
+            if (vuelo.getHoraLlegada() != null) {
                 predicados.add(cb.equal(vueloRoot.get("horaLlegada"), vuelo.getHoraLlegada()));
             }
-            if(vuelo.getHoraSalida()!=null){
+            if (vuelo.getHoraSalida() != null) {
                 predicados.add(cb.equal(vueloRoot.get("horaSalida"), vuelo.getHoraSalida()));
             }
-            if(vuelo.getPrecio()!=null){
+            if (vuelo.getPrecio() != null) {
                 predicados.add(cb.equal(vueloRoot.get("precio"), vuelo.getPrecio()));
             }
 
-            if(!predicados.isEmpty())
+            if (!predicados.isEmpty())
                 criteriaQuery.where(cb.or(predicados.toArray(new Predicate[0])));
 
             Query query = session.createQuery(criteriaQuery);
@@ -143,11 +142,11 @@ public class CrudVueloService extends HibernateSessionFactory implements CrudSer
             if (vuelo.getDestino() != null) {
                 predicados.add(cb.like(destinoJoin.get("nombre"), "%".concat(vuelo.getDestino().getNombre()).concat("%")));
             }
-            if(vuelo.getFechaSalida()!=null){
+            if (vuelo.getFechaSalida() != null) {
                 predicados.add(cb.equal(vueloRoot.get("fechaSalida"), vuelo.getFechaSalida()));
             }
 
-            if(!predicados.isEmpty())
+            if (!predicados.isEmpty())
                 criteriaQuery.where(cb.and(predicados.toArray(new Predicate[0])));
 
             Query query = session.createQuery(criteriaQuery);
@@ -176,5 +175,27 @@ public class CrudVueloService extends HibernateSessionFactory implements CrudSer
         }
 
         return v;
+    }
+
+    public BigInteger contadorVuelos(String tipo) {
+        BigInteger vuelos = null;
+        try {
+            switch (tipo) {
+                case "MONTH":
+                    vuelos = (BigInteger) session.createNativeQuery("SELECT COUNT(*) AS total_vuelos_mes_actual FROM vuelo WHERE YEAR(fechaSalida) = YEAR(CURDATE()) AND MONTH(fechaSalida) = MONTH(CURDATE())").uniqueResult();
+                    break;
+                case "YEAR":
+                    vuelos = (BigInteger) session.createNativeQuery("SELECT COUNT(*) AS total_vuelos_año_actual FROM vuelo WHERE YEAR(fechaSalida) = YEAR(CURDATE())").uniqueResult();
+                    break;
+                case "TOTAL":
+                    vuelos = (BigInteger) session.createNativeQuery("SELECT COUNT(*) AS total_vuelos FROM vuelo").uniqueResult();
+                    break;
+            }
+
+
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
+        }
+        return vuelos;
     }
 }

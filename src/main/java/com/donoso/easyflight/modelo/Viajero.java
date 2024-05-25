@@ -7,6 +7,7 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.Set;
 
 @Entity(name = "Viajero")
@@ -18,7 +19,9 @@ import java.util.Set;
 public class Viajero implements Serializable {
 
     @Id
-    @Column(name = "id")
+    @Column(name = "id", unique = true, nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Basic(optional = false)
     private Integer id;
     @Column(name = "dni")
     private String dni;
@@ -26,10 +29,14 @@ public class Viajero implements Serializable {
     private String nombre;
     @Column(name = "apellidos")
     private String apellidos;
-    @Column(name = "adulto")
-    private boolean adulto;
+    @Column(name = "fechaNacimiento")
+    private LocalDate fechaNacimiento;
 
-    @OneToMany(fetch = FetchType.EAGER, mappedBy = "viajero")
-    Set<ReservaViajero> reservaViajeros;
+    /*@OneToMany(fetch = FetchType.EAGER, mappedBy = "viajero")
+    Set<ReservaViajero> reservaViajeros;*/
+
+    public Viajero(Integer id){
+        this.id = id;
+    }
 
 }

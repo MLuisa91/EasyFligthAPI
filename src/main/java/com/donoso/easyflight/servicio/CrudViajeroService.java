@@ -84,7 +84,7 @@ public class CrudViajeroService extends HibernateSessionFactory implements CrudS
             if (viajero.getNombre()!=null)
                 predicados.add(cb.equal(ofertaRoot.get("nombre"),viajero.getNombre()));
             if(viajero.getApellidos()!=null){
-                predicados.add(cb.like(ofertaRoot.get("descripcion"),"%".concat(viajero.getApellidos()).concat("%")));
+                predicados.add(cb.like(ofertaRoot.get("apellidos"),"%".concat(viajero.getApellidos()).concat("%")));
             }
 
             if(!predicados.isEmpty())

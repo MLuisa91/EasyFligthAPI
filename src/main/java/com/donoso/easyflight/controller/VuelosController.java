@@ -8,6 +8,8 @@ import com.donoso.easyflight.servicio.CrudVueloService;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.math.BigInteger;
+import java.time.LocalDate;
 import java.util.List;
 
 @Path("/vuelos")
@@ -55,6 +57,14 @@ public class VuelosController {
         return Response.ok(vuelos, MediaType.APPLICATION_JSON).build();
     }
 
+    @GET
+    @Path("/contador/{tipo}")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response contadorVuelos(@PathParam("tipo") String tipo) {
+        BigInteger vuelos = this.crudVueloService.contadorVuelos(tipo);
+        return Response.ok(vuelos, MediaType.APPLICATION_JSON).build();
+    }
+
     @PUT
     @Path("/actualizar")
     @Produces(MediaType.APPLICATION_JSON)
@@ -72,4 +82,6 @@ public class VuelosController {
         this.crudVueloService.delete(v);
         return Response.ok().build();
     }
+
+
 }

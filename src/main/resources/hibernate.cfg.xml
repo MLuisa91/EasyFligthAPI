@@ -4,13 +4,18 @@
 
 <hibernate-configuration xmlns="http://www.hibernate.org/xsd/orm/cfg">
     <session-factory>
+        <!--conexión a base de datos-->
         <property name="hibernate.connection.driver_class">com.mysql.cj.jdbc.Driver</property>
         <property name="hibernate.connection.username">admin</property>
         <property name="hibernate.connection.url">jdbc:mysql://localhost:3306/vuelosdb</property>
         <property name="hibernate.dialect">org.hibernate.dialect.MySQLDialect</property>
+        <!--muestra las consultas en consola-->
         <property name="hibernate.show_sql">true</property>
+        <!--da formato a las consultas-->
         <property name="hibernate.format_sql">true</property>
+        <!--según la opción escogida, puede llegar a crear las tablas en base de datos-->
         <property name="hibernate.hbm2ddl.auto">none</property>
+        <!--mapeo de las entity contra las tablas de base de datos-->
         <mapping class="com.donoso.easyflight.modelo.Usuario"/>
         <mapping class="com.donoso.easyflight.modelo.Pais"/>
         <mapping class="com.donoso.easyflight.modelo.Avion"/>
@@ -24,5 +29,6 @@
         <mapping class="com.donoso.easyflight.modelo.UsuarioRol"/>
         <mapping class="com.donoso.easyflight.modelo.ReservaViajero"/>
         <mapping class="com.donoso.easyflight.modelo.Viajero"/>
+        <mapping class="com.donoso.easyflight.modelo.Respaldo"/>
     </session-factory>
 </hibernate-configuration>

@@ -17,7 +17,7 @@ import java.io.Serializable;
 public class ReservaViajeroPK implements Serializable {
 
     @Column(name = "reserva_id")
-    private String reservaId;
+    private Integer reservaId;
     @Column(name = "viajero_id")
     private Integer viajeroId;
 

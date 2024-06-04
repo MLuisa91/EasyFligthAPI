@@ -151,7 +151,6 @@ public class CrudUsuarioService extends HibernateSessionFactory implements CrudS
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-
         return user;
     }
 

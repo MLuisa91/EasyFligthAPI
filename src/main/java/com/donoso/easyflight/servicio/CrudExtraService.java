@@ -36,6 +36,7 @@ public class CrudExtraService extends HibernateSessionFactory implements CrudSer
     public void update(Extra extra) {
         try {
             if (this.findById(extra) != null) {
+                this.openSession();
                 session.getTransaction().begin();
                 session.update(extra);
                 session.getTransaction().commit();
@@ -52,6 +53,7 @@ public class CrudExtraService extends HibernateSessionFactory implements CrudSer
     public void delete(Extra extra) {
         try {
             if (this.findById(extra) != null) {
+                this.openSession();
                 session.getTransaction().begin();
                 session.delete(extra);
                 session.getTransaction().commit();

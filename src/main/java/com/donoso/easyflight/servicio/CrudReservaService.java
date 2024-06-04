@@ -217,12 +217,6 @@ public class CrudReservaService extends HibernateSessionFactory implements CrudS
 
             MatrixToImageWriter.writeToPath(matrix,"jpg", Paths.get(path));
             final File file = new File(path);
-            /*StreamingOutput stream = new StreamingOutput() {
-                @Override
-                public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                    outputStream.write(IOUtils.toByteArray(new FileInputStream(file)));
-                }
-            };*/
 
             return Files.newInputStream(file.toPath());
         }catch (Exception e) {

@@ -37,6 +37,7 @@ public class CrudVueloService extends HibernateSessionFactory implements CrudSer
     public void update(Vuelo vuelo) {
         try {
             if (this.findById(vuelo) != null) {
+                this.openSession();
                 session.getTransaction().begin();
                 session.update(vuelo);
                 session.getTransaction().commit();
@@ -53,6 +54,7 @@ public class CrudVueloService extends HibernateSessionFactory implements CrudSer
     public void delete(Vuelo vuelo) {
         try {
             if (this.findById(vuelo) != null) {
+                this.openSession();
                 session.getTransaction().begin();
                 session.delete(vuelo);
                 session.getTransaction().commit();

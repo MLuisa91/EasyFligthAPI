@@ -1,5 +1,6 @@
 package com.donoso.easyflight.servicio;
 
+import com.donoso.easyflight.configuration.EnvironmentConfiguration;
 import com.donoso.easyflight.hibernate.HibernateSessionFactory;
 import com.donoso.easyflight.modelo.Extra;
 import com.donoso.easyflight.modelo.Respaldo;
@@ -22,36 +23,39 @@ import java.util.TimerTask;
 
 public class CrudBackupService extends HibernateSessionFactory implements CrudServiceInterface<Respaldo> {
 
-    private static final String NOMBRE_FICHERO = "_flighExtrem_backup.sql";
     private static final String DIRECTORIO_FICHERO = "C:/Mercedes/";
-    private static final String DIRECTORIO_MYSQL = "C:/xampp/mysql/bin/";
-    private static final String USER = "admin";
-    private static final String DB = "vuelosdb";
+
+    private EnvironmentConfiguration configuration;
 
     public CrudBackupService() {
         super();
+        configuration = new EnvironmentConfiguration();
     }
 
     @Override
     public void save(Respaldo object) {
 
-        try {
-            this.openSession();
-            String file = this.generarBackup();
-            Boolean generada = file != null;
-            Respaldo respaldo = new Respaldo(null, file, LocalDate.now(), null, generada);
-            session.getTransaction().begin();
 
-            session.save(respaldo);
+        if(Boolean.getBoolean(configuration.loadPropertie("ACTIVE_BACKUP"))){
+            try {
+                this.openSession();
+                String file = this.generarBackup();
+                Boolean generada = file != null;
+                Respaldo respaldo = new Respaldo(null, file, LocalDate.now(), null, generada);
+                session.getTransaction().begin();
 
-            session.getTransaction().commit();
-        } catch (Exception e) {
-            session.getTransaction().rollback();
-            throw new RuntimeException(e);
-        } finally {
-            session.close();
-            session.getSessionFactory().close();
+                session.save(respaldo);
+
+                session.getTransaction().commit();
+            } catch (Exception e) {
+                session.getTransaction().rollback();
+                throw new RuntimeException(e);
+            } finally {
+                session.close();
+                session.getSessionFactory().close();
+            }
         }
+
 
     }
 
@@ -63,13 +67,13 @@ public class CrudBackupService extends HibernateSessionFactory implements CrudSe
     private String generarBackup() {
 
         try {
-            String nombreFile = LocalDateTime.now().getNano()  + NOMBRE_FICHERO;
+            String nombreFile = LocalDateTime.now().getNano()  + configuration.loadPropertie("NOMBRE_FICHERO") ;
             // Ejecutamos el proceso mysql que realizará la copia de seguridad
-            Process p = Runtime.getRuntime().exec(DIRECTORIO_MYSQL + "/mysqldump -u " + USER + " --ignore-table=vuelosdb.respaldo " + DB);
+            Process p = Runtime.getRuntime().exec(configuration.loadPropertie("DIRECTORIO_MYSQL") + "/mysqldump -u " + configuration.loadPropertie("USER") + " --ignore-table=vuelosdb.respaldo " + configuration.loadPropertie("DB"));
 
             InputStream inputStream = p.getInputStream();
             // creamos el fichero sql para guardar dentro el backup de base de datos
-            FileOutputStream fos = new FileOutputStream(DIRECTORIO_FICHERO + nombreFile);
+            FileOutputStream fos = new FileOutputStream(configuration.loadPropertie("DIRECTORIO_FICHERO") + nombreFile);
             byte[] buffer = new byte[1000];
 
             int contenido = inputStream.read(buffer);
@@ -112,11 +116,11 @@ public class CrudBackupService extends HibernateSessionFactory implements CrudSe
     private String restore(Respaldo respaldo) {
         try {
             // Ejecutamos el proceso mysql que realizará el restaurado de la copia de seguridad
-            Process process = Runtime.getRuntime().exec(DIRECTORIO_MYSQL + "/mysql -u " + USER + " " + DB);
+            Process process = Runtime.getRuntime().exec(configuration.loadPropertie("DIRECTORIO_MYSQL") + "/mysql -u " + configuration.loadPropertie("USER") + " " + configuration.loadPropertie("DB"));
 
             // leemos el fichero
             OutputStream salida = process.getOutputStream();
-            FileInputStream inputStream = new FileInputStream(DIRECTORIO_FICHERO + respaldo.getNombre());
+            FileInputStream inputStream = new FileInputStream(configuration.loadPropertie("DIRECTORIO_FICHERO") + respaldo.getNombre());
             byte[] buffer = new byte[1000];
 
             int leido = inputStream.read(buffer);
@@ -129,7 +133,7 @@ public class CrudBackupService extends HibernateSessionFactory implements CrudSe
             salida.flush();
             salida.close();
             inputStream.close();
-            return NOMBRE_FICHERO;
+            return configuration.loadPropertie("NOMBRE_FICHERO");
         } catch (Exception e) {
             return null;
         }

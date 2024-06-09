@@ -1,6 +1,7 @@
 package com.donoso.easyflight.controller;
 
 
+import com.donoso.easyflight.configuration.EnvironmentConfiguration;
 import com.donoso.easyflight.modelo.Respaldo;
 import com.donoso.easyflight.servicio.CrudBackupService;
 
@@ -16,9 +17,11 @@ import java.util.TimerTask;
 public class BackupController {
 
     private final CrudBackupService crudBackupService;
+    private EnvironmentConfiguration configuration;
 
     public BackupController() {
         this.crudBackupService = new CrudBackupService();
+        configuration = new EnvironmentConfiguration();
     }
 
     @POST
@@ -32,7 +35,8 @@ public class BackupController {
                 crudBackupService.save(null);
             }
         };
-        timer.schedule(ejecuta,1,  1000*60);
+        Integer timerProperties = Integer.parseInt(configuration.loadPropertie("BACKUP_TIMER"));
+        timer.schedule(ejecuta,1,  timerProperties);
 
         return Response.ok().build();
     }

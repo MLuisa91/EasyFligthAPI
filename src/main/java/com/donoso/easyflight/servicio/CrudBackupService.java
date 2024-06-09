@@ -23,8 +23,6 @@ import java.util.TimerTask;
 
 public class CrudBackupService extends HibernateSessionFactory implements CrudServiceInterface<Respaldo> {
 
-    private static final String DIRECTORIO_FICHERO = "C:/Mercedes/";
-
     private EnvironmentConfiguration configuration;
 
     public CrudBackupService() {

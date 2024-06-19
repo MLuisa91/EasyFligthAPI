@@ -63,9 +63,27 @@ public class CrudReservaService extends HibernateSessionFactory implements CrudS
     @Override
     public void update(Reserva reserva) {
         try {
-            if (this.findById(reserva) != null) {
+            Reserva reservaActual = this.findById(reserva);
+            if (reservaActual != null) {
                 this.openSession();
                 session.getTransaction().begin();
+
+                reservaActual.getReservaExtras().forEach(reservaExtra -> {
+                    reservaExtraService.delete(new ReservaExtra(new ReservaExtraPK(reservaActual.getId(), reservaExtra.getExtra().getId()), reservaActual, reservaExtra.getExtra()));
+                });
+
+                reservaActual.getReservaViajeros().forEach(reservaViajero -> {
+                    reservaViajeroService.delete(new ReservaViajero(new ReservaViajeroPK(reservaActual.getId(), reservaViajero.getViajero().getId()), reservaActual, reservaViajero.getViajero()));
+                });
+
+                reserva.getReservaExtras().forEach(reservaExtra -> {
+                    reservaExtraService.save(new ReservaExtra(new ReservaExtraPK(reservaActual.getId(), reservaExtra.getExtra().getId()), reservaActual, reservaExtra.getExtra()));
+                });
+
+                reserva.getReservaViajeros().forEach(reservaViajero -> {
+                    reservaViajeroService.save(new ReservaViajero(new ReservaViajeroPK(reservaActual.getId(), reservaViajero.getViajero().getId()), reservaActual, reservaViajero.getViajero()));
+                });
+
                 session.update(reserva);
                 session.getTransaction().commit();
             }
@@ -80,9 +98,19 @@ public class CrudReservaService extends HibernateSessionFactory implements CrudS
     @Override
     public void delete(Reserva reserva) {
         try {
-            if (this.findById(reserva) != null) {
+            Reserva reservaActual = this.findById(reserva);
+            if (reservaActual != null) {
                 this.openSession();
                 session.getTransaction().begin();
+
+                reservaActual.getReservaExtras().forEach(reservaExtra -> {
+                    reservaExtraService.delete(new ReservaExtra(new ReservaExtraPK(reservaActual.getId(), reservaExtra.getExtra().getId()), reservaActual, reservaExtra.getExtra()));
+                });
+
+                reservaActual.getReservaViajeros().forEach(reservaViajero -> {
+                    reservaViajeroService.delete(new ReservaViajero(new ReservaViajeroPK(reservaActual.getId(), reservaViajero.getViajero().getId()), reservaActual, reservaViajero.getViajero()));
+                });
+
                 session.delete(reserva);
                 session.getTransaction().commit();
             }

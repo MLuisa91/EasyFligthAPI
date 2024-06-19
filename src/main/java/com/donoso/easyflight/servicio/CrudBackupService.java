@@ -34,7 +34,7 @@ public class CrudBackupService extends HibernateSessionFactory implements CrudSe
     public void save(Respaldo object) {
 
 
-        if(Boolean.getBoolean(configuration.loadPropertie("ACTIVE_BACKUP"))){
+        if(Boolean.parseBoolean(configuration.loadPropertie("ACTIVE_BACKUP"))){
             try {
                 this.openSession();
                 String file = this.generarBackup();
